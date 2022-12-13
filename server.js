@@ -35,7 +35,7 @@ const PORT = process.env.PORT || 5000
 const NODE_ENV = process.env.NODE_ENV
 
 let msgListen = `Server running in ${NODE_ENV} mode on port: ${PORT}`
-const server = app.listen(PORT, console.log(msgListen.cyan))
+const server = app.listen(PORT, console.log(msgListen.white.bgCyan))
 
 process.on('unhandledRejection', (err, promise) => {
   console.log(`${err}`.red)
