@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const BootcampSchema = new mongoose.Schema({
   name: {
     type: String,
-    require: [true, 'Please add a name'],
+    required: [true, 'Please add a name'],
     unique: true,
     trim: true,
     maxLength: [50, 'Name can not be more than 50 characters']
@@ -11,7 +11,7 @@ const BootcampSchema = new mongoose.Schema({
   slug: String, 
   description: {
     type: String,
-    require: [true, 'Please add a description'],
+    required: [true, 'Please add a description'],
     maxLength: [500, 'Description can not be more than 500 characters']
   },
   website: {
@@ -40,11 +40,10 @@ const BootcampSchema = new mongoose.Schema({
     type: {
       type: String, // Don't do `{ location: { type: String } }`
       enum: ['Point'], // 'location.type' must be 'Point'
-      required: false // to true 
     },
     coordinates: {
       type: [Number],
-      required: false
+      index: '2dsphere'
     },
     formattedAddress: String,
     street: String,
