@@ -1,44 +1,46 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const morgan = require('morgan')
-const colors = require('colors')
-const errorHandler = require('./middleware/error')
-const connectDB = require('./config/db')
+const express = require('express');
+const dotenv = require('dotenv');
+const morgan = require('morgan');
+const colors = require('colors');
+const errorHandler = require('./middleware/error');
+const connectDB = require('./config/db');
 
 // Load env vars
-dotenv.config({ path: './config/config.env' })
+dotenv.config({ path: './config/config.env' });
 
 // Connect to the database
-connectDB()
+connectDB();
 
-const app = express()
+const app = express();
 
 // Body parser
-app.use(express.json())
+app.use(express.json());
 
 // Dev logging middleware
 if(process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'))
-}
+  app.use(morgan('dev'));
+};
 
 // Route files
-const bootcamps = require('./routes/bootcamps')
+const bootcamps = require('./routes/bootcamps');
+const courses = require('./routes/courses');
 
 // Mount routers
-app.use('/api/v1/bootcamps', bootcamps)
+app.use('/api/v1/bootcamps', bootcamps);
+app.use('/api/v1/courses', courses);
 
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 
-const PORT = process.env.PORT || 5000
-const NODE_ENV = process.env.NODE_ENV
+const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV;
 
-let msgListen = `Server running in ${NODE_ENV} mode on port: ${PORT}`
-const server = app.listen(PORT, console.log(msgListen.white.bgCyan))
+let msgListen = `Server running in ${NODE_ENV} mode on port: ${PORT}`;
+const server = app.listen(PORT, console.log(msgListen.white.bgCyan));
 
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`${err}`.red)
-  server.close(() => process.exit(1))
-})
+  console.log(`${err}`.red);
+  server.close(() => process.exit(1));
+});
 
