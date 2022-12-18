@@ -1,3 +1,4 @@
+const path = require('path');
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require('../middleware/async');
 const geocoder = require('../utils/geocoder');
@@ -159,4 +160,60 @@ exports.getBootcampsInRadius=asyncHandler( async (req, res, next) => {
     count: bootcamps.length,
     data: bootcamps
   });
+});
+
+// @desc -> Upload Photo for bootcamp
+// @route -> PUT /api/v1/bootcamps/:id/photo
+// @access -> Private 
+exports.bootcampPhotoUpload = asyncHandler(async(req, res, next) => {
+  const id = req.params.id;
+  const bootcamp = await Bootcamp.findById(id);
+
+  if (!bootcamp) {
+    let errMsg = `Bootcamp not found with id of ${req.params.id}`;
+    return next(new ErrorResponse(errMsg, 404));
+  }
+
+  if (!req.files) {
+    let errMsg = `Please upload a file`;
+    return next(new ErrorResponse(errMsg, 400));
+  }
+
+  const file = req.files.file;
+
+  // Make sure is a photo
+  if(!file.mimetype.startsWith('image')){
+    let errMsg = `Please upload an image file`;
+    return next(new ErrorResponse(errMsg, 400));
+  }
+
+  // Check max file size
+  if(file.size > process.env.MAX_FILE_UPLOAD) {
+    let errMsg = `Your image size must be less than ${process.env.MAX_FILE_UPLOAD}`;
+    return next(new ErrorResponse(errMsg, 400));
+  }
+
+  // Create custom file name
+  file.name = `image_${bootcamp._id}${path.parse(file.name).ext}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+    if (err) {
+      console.log(err)
+      let errMsg = `Problem with file upload`;
+      return next(new ErrorResponse(errMsg, 500));
+    }
+
+    // uploading file to the database
+    await Bootcamp.findByIdAndUpdate(id, { photo: file.name });
+
+    res.status(200).json({ success: true, data: file.name });
+  });
+});
+
+// @desc -> Create new bootcamp
+// @route -> POST /api/v1/bootcamps
+// @access -> Private
+exports.createBootcamp =asyncHandler( async (req, res, next) => {
+    const bootcamp = await Bootcamp.create(req.body);
+    res.status(201).json({ success: true, data: bootcamp });
 });
