@@ -36,9 +36,9 @@ UserSchema = new mongoose.Schema({
 });
 
 // Encrypt password using bcrypt
-UserSchema.pre('save', async function(next) {
-  const salt = await bcryptjs.genSalt(10);
-  this.password = await bcryptjs.hash(this.password, salt);
+UserSchema.pre('save',function(next) {
+  const salt = bcryptjs.genSaltSync(10);
+  this.password = bcryptjs.hashSync(this.password, salt);
   next();
 });
 
@@ -48,5 +48,11 @@ UserSchema.methods.getSignedJwToken = function () {
     expiresIn: process.env.JWT_EXPIRE 
   });
 };
+
+// Match user entered password to hashed password in database
+UserSchema.methods.matchPassword = function (enteredPassword) {
+  return bcryptjs.compareSync(enteredPassword, this.password);
+};
+
 
 module.exports = mongoose.model('User', UserSchema);
