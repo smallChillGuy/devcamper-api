@@ -29,8 +29,8 @@ exports.getBootcamp =asyncHandler(async(req, res, next) => {
 // @route -> POST /api/v1/bootcamps
 // @access -> Private
 exports.createBootcamp =asyncHandler( async (req, res, next) => {
-    const bootcamp = await Bootcamp.create(req.body);
-    res.status(201).json({ success: true, data: bootcamp });
+  const bootcamp = await Bootcamp.create(req.body);
+  res.status(201).json({ success: true, data: bootcamp});
 });
 
 // @desc -> Update bootcamp
@@ -143,10 +143,3 @@ exports.bootcampPhotoUpload = asyncHandler(async(req, res, next) => {
   });
 });
 
-// @desc -> Create new bootcamp
-// @route -> POST /api/v1/bootcamps
-// @access -> Private
-exports.createBootcamp =asyncHandler( async (req, res, next) => {
-    const bootcamp = await Bootcamp.create(req.body);
-    res.status(201).json({ success: true, data: bootcamp });
-});
