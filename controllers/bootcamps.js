@@ -52,18 +52,27 @@ exports.createBootcamp =asyncHandler( async (req, res, next) => {
 // @route -> PUT /api/v1/bootcamps/:id
 // @access -> Private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
-    const id = req.params.id;
-    const bootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+  const id = req.params.id;
+  let bootcamp = await Bootcamp.findById(id);
 
-    if (!bootcamp) {
-      let errMsg = `Bootcamp not found with id of ${req.params.id}`;
-      return next(new ErrorResponse(errMsg, 404));
-    }
+  if (!bootcamp) {
+    let errMsg = `Bootcamp not found with id of ${req.params.id}`;
+    return next(new ErrorResponse(errMsg, 404));
+  }
 
-    res.status(200).json({ success: true, data: bootcamp });
+  // Make sure is bootcamp owner
+  const isOwner = bootcamp.user.toString() === req.user.id;
+  const isAdmin = req.user.role === 'admin'
+  if (!isOwner && !isAdmin) {
+    let errMsg = `User ${req.user.id} is not authorized for this.`;
+    return next(new ErrorResponse(errMsg, 401));
+  }
+
+  bootcamp = await Bootcamp.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({ success: true, data: bootcamp });
 });
 
 // @desc -> Delete bootcamp
@@ -76,6 +85,14 @@ exports.deleteBootcamp =asyncHandler( async (req, res, next) => {
     if (!bootcamp) {
       let errMsg = `Bootcamp not found with id of ${req.params.id}`;
       return next(new ErrorResponse(errMsg, 404));
+    }
+  
+    // Make sure is bootcamp owner
+    const isOwner = bootcamp.user.toString() === req.user.id;
+    const isAdmin = req.user.role === 'admin'
+    if (!isOwner && !isAdmin) {
+      let errMsg = `User ${req.user.id} is not authorized for this.`;
+      return next(new ErrorResponse(errMsg, 401));
     }
 
     await bootcamp.remove();
@@ -120,6 +137,14 @@ exports.bootcampPhotoUpload = asyncHandler(async(req, res, next) => {
   if (!bootcamp) {
     let errMsg = `Bootcamp not found with id of ${req.params.id}`;
     return next(new ErrorResponse(errMsg, 404));
+  }
+
+  // Make sure is bootcamp owner
+  const isOwner = bootcamp.user.toString() === req.user.id;
+  const isAdmin = req.user.role === 'admin'
+  if (!isOwner && !isAdmin) {
+    let errMsg = `User ${req.user.id} is not authorized for this.`;
+    return next(new ErrorResponse(errMsg, 401));
   }
 
   if (!req.files) {
