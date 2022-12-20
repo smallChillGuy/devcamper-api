@@ -1,24 +1,24 @@
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require('../middleware/async');
-const Course = require("../models/Course");
+const Review = require("../models/Review");
 const Bootcamp = require("../models/Bootcamps");
 
-// @desc -> GET courses 
-// @route -> GET /api/v1/bootcamps/:bootcampId/courses
-// @route -> GET /api/v1/courses
+// @desc -> GET reviews 
+// @route -> GET /api/v1/bootcamps/:bootcampId/reviews
+// @route -> GET /api/v1/reviews
 // @access -> Public
-exports.getCourses = asyncHandler(async(req, res, next) => {
+exports.getReviews = asyncHandler(async(req, res, next) => {
   if (req.params.bootcampId) {
-    // GET /api/v1/bootcamps/:bootcampId/courses
-    const courses =await Course.find({ bootcamp: req.params.bootcampId });
+    // GET /api/v1/bootcamps/:bootcampId/reviews
+    const review = await Review.find({ bootcamp: req.params.bootcampId });
     
     return res.status(200).json({
       success: true,
-      count: courses.length,
-      data: courses
+      count: review.length,
+      data: review 
     });
   } else {
-    // GET /api/v1/courses
+    // GET /api/v1/reviews
     res.status(200).json(res.advanceResults);
   }
 });
