@@ -9,6 +9,7 @@ dotenv.config({ path: './config/config.env' });
 // Load models
 const Bootcamp = require('./models/Bootcamps');
 const Course = require('./models/Course');
+const User = require('./models/User');
 
 // Connect to DB
 mongoose.set('strictQuery', true);
@@ -22,6 +23,7 @@ const ImportData = async () => {
   try {
     await Bootcamp.create(readJSONfiles('bootcamps'));
     await Course.create(readJSONfiles('courses'));
+    await User.create(readJSONfiles('users'));
     console.log('Data Imported...'.green.bgWhite);
     process.exit();
   } catch (err) {
@@ -34,6 +36,7 @@ const deleteData = async () => {
   try {
     await Bootcamp.deleteMany();
     await Course.deleteMany();
+    await User.deleteMany();
     console.log('Data Destroyed...'.red.bgWhite);
     process.exit();
   } catch (err) {
