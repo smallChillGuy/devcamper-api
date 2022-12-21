@@ -23,26 +23,26 @@ exports.getReviews = asyncHandler(async(req, res, next) => {
   }
 });
 
-// @desc -> GET single Course 
-// @route -> GET /api/v1/courses/:id
+// @desc -> GET single review 
+// @route -> GET /api/v1/reviews/:id
 // @access -> Public
-exports.getCourse = asyncHandler(async(req, res, next) => {
-  const course = await Course.findById(req.params.id).populate({
+exports.getReview = asyncHandler(async(req, res, next) => {
+  const review = await Review.findById(req.params.id).populate({
     path: 'bootcamp',
     select: 'name description'
   });
 
-  if (!course) {
-    let errMsg = `Course not found with id of ${req.params.id}`;
+  if (!review) {
+    let errMsg = `Review not found with id of ${req.params.id}`;
     return next(new ErrorResponse(errMsg, 404));
   }
-  res.status(200).json({ success: true, data: course });
+  res.status(200).json({ success: true, data: review});
 });
 
-// @desc -> Create new Course 
-// @route -> POST /api/v1/bootcamps/:bootcampId/courses
+// @desc -> Create new review 
+// @route -> POST /api/v1/bootcamps/:bootcampId/reviews
 // @access -> Private
-exports.addCourse =asyncHandler( async (req, res, next) => {
+exports.addReview =asyncHandler( async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
   req.body.user = req.user.id;
 
@@ -61,11 +61,11 @@ exports.addCourse =asyncHandler( async (req, res, next) => {
     return next(new ErrorResponse(errMsg, 401));
   }
 
-  const course = await Course.create(req.body);
+  const review = await Review.create(req.body);
 
   res.status(201).json({
     success: true,
-    data: course
+    data: review 
   });
 });
 
