@@ -72,6 +72,18 @@ exports.getMe = asyncHandler(async(req, res, next) => {
 
 });
 
+// @desc Log user out / clear cookie 
+// @route GET /api/v1/auth/logout
+// @access Private
+exports.logout = asyncHandler(async(req, res, next) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  });
+
+  res.status(200).json({ success: true });
+});
+
 // @desc  Update user password
 // @route PUT /api/v1/auth/updatepassword
 // @access Private
@@ -94,28 +106,6 @@ exports.updatePassword = asyncHandler(async(req, res, next) => {
 // @route PUT /api/v1/auth/updatedetails
 // @access Private
 exports.updateDetails = asyncHandler(async(req, res, next) => {
-  console.log(req.user)
-  const fieldsToUpdate = {
-    name: req.body.name,
-    email: req.body.email
-  };
-
-  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true 
-  });
-
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
-});
-
-// @desc Update user details 
-// @route PUT /api/v1/auth/updatedetails
-// @access Private
-exports.updateDetails = asyncHandler(async(req, res, next) => {
-  console.log(req.user)
   const fieldsToUpdate = {
     name: req.body.name,
     email: req.body.email
@@ -216,7 +206,6 @@ const sendTokenResponse = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
   }
-
   res
     .status(statusCode)
     .cookie('token', token, options)
