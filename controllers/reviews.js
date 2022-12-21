@@ -66,56 +66,56 @@ exports.addReview =asyncHandler( async (req, res, next) => {
   });
 });
 
-// @desc -> Update  course
-// @route -> PUT /api/v1/courses/:id
+// @desc -> Update Review
+// @route -> PUT /api/v1/reviews/:id
 // @access -> Private
-exports.updateCourse = asyncHandler(async(req, res, next) => {
-  let course = await Course.findById(req.params.id);
+exports.updateReview = asyncHandler(async(req, res, next) => {
+  let review = await Review.findById(req.params.id);
 
-  if(!course) {
-    let errMsg = `Course not found with id of ${req.params.id}`;
+  if(!review) {
+    let errMsg = `Review not found with id of ${req.params.id}`;
     return next(new ErrorResponse(errMsg, 404));
   }
 
-  // Make sure is bootcamp owner
-  const isOwner = course.user.toString() === req.user.id;
+  // Make sure is review owner
+  const isOwner = review.user.toString() === req.user.id;
   const isAdmin = req.user.role === 'admin'
   if (!isOwner && !isAdmin) {
-    let errMsg = `User ${req.user.id} not authorized to update course.`;
+    let errMsg = `User ${req.user.id} not authorized to update review.`;
     return next(new ErrorResponse(errMsg, 401));
   }
 
-  course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+  review = await Review.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true
   });
 
   res.status(200).json({
     success: true,
-    data: course
+    data: review 
   });
 });
 
-// @desc -> Delete bootcamp
-// @route -> DELETE /api/v1/courses/:id
+// @desc -> Delete review 
+// @route -> DELETE /api/v1/reviews/:id
 // @access -> Private
-exports.deleteCourse = asyncHandler(async(req, res, next) => {
-  const course = await Course.findById(req.params.id);
+exports.deleteReview = asyncHandler(async(req, res, next) => {
+  const review = await Review.findById(req.params.id);
 
-  if(!course) {
-    let errMsg = `Course not found with id of ${req.params.id}`;
+  if(!review) {
+    let errMsg = `Review not found with id of ${req.params.id}`;
     return next(new ErrorResponse(errMsg, 404));
   }
 
-  // Make sure is bootcamp owner
-  const isOwner = course.user.toString() === req.user.id;
+  // Make sure is review owner or is Admin
+  const isOwner = review.user.toString() === req.user.id;
   const isAdmin = req.user.role === 'admin'
   if (!isOwner && !isAdmin) {
-    let errMsg = `User ${req.user.id} not authorized to delete course.`;
+    let errMsg = `User ${req.user.id} not authorized to delete review.`;
     return next(new ErrorResponse(errMsg, 401));
   }
 
-  await course.remove();
+  await review.remove();
 
   res.status(200).json({
     success: true,
