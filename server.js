@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const fileupload = require('express-fileupload');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+const mongoSanitize = require('express-mongo-sanitize');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -21,6 +22,8 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+// Sanitize data
+app.use(mongoSanitize());
 
 // Dev logging middleware
 if(process.env.NODE_ENV === 'development') {
