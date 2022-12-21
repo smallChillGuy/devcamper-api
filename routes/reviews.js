@@ -17,7 +17,8 @@ router
   .get(advanceResults(Review, {
     path: 'bootcamp',
     select: 'name description'
-  }), getReviews).post(protect, addReview)
+  }), getReviews)
+  .post(protect, authorize('user', 'admin'), addReview)
 
 router
   .route('/:id').get(getReview)

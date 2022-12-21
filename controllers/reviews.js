@@ -53,11 +53,8 @@ exports.addReview =asyncHandler( async (req, res, next) => {
     return next(new ErrorResponse(errMsg, 404));
   }
 
-  // Make sure is bootcamp owner
-  const isOwner = bootcamp.user.toString() === req.user.id;
-  const isAdmin = req.user.role === 'admin'
-  if (!isOwner && !isAdmin) {
-    let errMsg = `User ${req.user.id} not authorized to add course.`;
+  if (!bootcamp) {
+    let errMsg = `Not Bootcamp found with the id of ${req.parasm.bootcampId}.`;
     return next(new ErrorResponse(errMsg, 401));
   }
 
