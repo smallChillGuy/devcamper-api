@@ -8,6 +8,8 @@ const fileupload = require('express-fileupload');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const xss = require('xss-clean');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });
@@ -24,6 +26,12 @@ app.use(cookieParser());
 
 // Sanitize data
 app.use(mongoSanitize());
+
+// Set security header
+app.use(helmet());
+
+// Security for XSS
+app.use(xss());
 
 // Dev logging middleware
 if(process.env.NODE_ENV === 'development') {
